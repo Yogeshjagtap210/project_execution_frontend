@@ -1,4 +1,5 @@
 import { PLMItem } from '../types';
+import { syncWithBackend } from './api';
 
 export interface SyncConfig {
   sheetUrl: string;
@@ -15,6 +16,9 @@ export const extractGoogleSheetId = (url: string): string | null => {
 export const fetchLiveGoogleSheetData = async (sheetUrl: string): Promise<PLMItem[]> => {
   const sheetId = extractGoogleSheetId(sheetUrl);
   
+  // Notify Render backend of sync request
+  syncWithBackend(sheetUrl).catch(err => console.warn('Backend sync notify error:', err));
+
   // Construct Google Sheets export URL for CSV format
   const exportUrl = sheetId 
     ? `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`
@@ -33,7 +37,6 @@ export const fetchLiveGoogleSheetData = async (sheetUrl: string): Promise<PLMIte
     return parseCSVToPLMItems(csvText);
   } catch (err) {
     console.warn('Direct fetch failed (CORS or Private Sheet), parsing live template dataset...', err);
-    // Return structured live sync simulation data if CORS blocks direct fetch
     return generateLiveSyncedData();
   }
 };
