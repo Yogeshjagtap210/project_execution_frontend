@@ -16,5 +16,11 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src",
+    "src/**/*",
+    "vite.config.ts",
+    "*.ts",
+    "*.tsx"
+  ]
 }
